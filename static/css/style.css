@@ -54,7 +54,18 @@ h1, .brand {
     top: 0;
     z-index: 1000;
     background-color: var(--paper);
-    height: var(--header-height); 
+    height: var(--header-height);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.site-header nav::-webkit-scrollbar {
+    display: none;
+}
+
+.site-header nav a {
+    flex-shrink: 0;
 }
 
 .site-header .container {
@@ -95,20 +106,23 @@ h1, .brand {
 
 .site-header nav a:hover {
     background-color: var(--accent-light);
+    color: var(--accent-dark);
 }
 
 .hero {
     min-height: 100vh;
-    position: sticky;    
+    position: static;    
     padding: var(--header-height) var(--space-xl) 5rem;
-
     scroll-margin-top: var(--header-height);
-    top: 0;
-    z-index: 1;
 
-    will-change: transform;
     display: flex;
     align-items: center;
+}
+
+.scroll-anchor {
+    display: block;
+    position: absolute;
+    scroll-margin-top: var(--header-height);
 }
 
 .hero-grid {
@@ -142,22 +156,230 @@ h1, .brand {
     line-height: 0.95;
 }
 
-.education {
-    min-height: calc(100vh - var(--header-height));
+.experience {
+    background: var(--paper);
     position: relative;
     z-index: 2;
-    background: white;
-    scroll-margin-top: var(--header-height);
-    will-change: transform;
+    padding: 7rem 0;
 }
 
-.education-grid {
+.section-grid {
     display: grid;
     grid-template-columns: 1.3fr 1fr;
-    gap: var(--space-medium) var(--space-large);
-    grid-template-areas: 
-        "education-title"
-        "education-detail";
+    gap: 3rem;
+}
+
+.section-title {
+    position: sticky;
+    top: calc(var(--header-height) + 3rem);
+    align-self: start;
+}
+
+.section-number {
+    display: block;
+    color: var(--accent);
+    font-size: .85rem;
+    margin-bottom: .5rem;
+}
+
+.section-title h1 {
+    margin: 0;
+    font-size: 3rem;
+}
+
+.experience-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.experience-item {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.experience-item:last-child {
+    border-bottom: 1px solid var(--line);
+}
+
+.experience-year {
+    color: var(--text-muted);
+    font-size: .9rem;
+}
+
+.experience-content h2 {
+    margin: 0 0 .25rem;
+    font-size: 1.3rem;
+}
+
+.experience-org {
+    color: var(--accent-dark);
+    margin-bottom: .75rem;
+}
+
+.experience-content p:last-child {
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.projects {
+    background: white;
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0;
+}
+
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.project-card {
+    border: 1px solid var(--line);
+    padding: 1.75rem;
+    transition:
+        border-color .2s ease,
+        background-color .2s ease,
+        transform .2s ease;
+}
+
+.project-card:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.project-top {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: .8rem;
+    margin-bottom: 2rem;
+}
+
+.project-card h2 {
+    margin: 0 0 .75rem;
+}
+
+.project-card p {
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 1.5rem 0;
+}
+
+.project-tags span {
+    border: 1px solid var(--line);
+    padding: .3rem .6rem;
+    font-size: .75rem;
+}
+
+.project-link {
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.project-link:hover {
+    color: var(--accent);
+}
+
+.education {
+    background: var(--paper);
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0;
+}
+
+.education-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.education-item {
+    padding: 2rem 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 2rem;
+}
+
+.education-item:last-child {
+    border-bottom: 1px solid var(--line);
+}
+
+.education-year {
+    color: var(--text-muted);
+    font-size: .85rem;
+}
+
+.education-item h2 {
+    margin: 0 0 .4rem;
+}
+
+.education-degree {
+    color: var(--accent-dark);
+    margin: 0 0 .5rem;
+}
+
+.education-item p:last-child {
+    color: var(--text-muted);
+}
+
+.skills {
+    background: white;
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0 9rem;
+}
+
+.skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.skill-group {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+}
+
+.skill-group h2 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin: 0 0 1.25rem;
+}
+
+.skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.skill-items span {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.5rem;
+    padding: .4rem .8rem;
+    border: 1px solid var(--line);
+    transition:
+        color .2s ease,
+        background-color .2s ease,
+        border-color .2s ease;
+}
+
+.skill-items span:hover {
+    color: white;
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
 }
 
 .bio {
@@ -241,8 +463,38 @@ h1, .brand {
     border-top: 1px solid var(--line);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 
+    .site-header .container {
+        padding: 0;
+    }
+
+    .section-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .section-title {
+        position: static;
+    }
+
+    .section-title h1 {
+        font-size: 2.25rem;
+    }
+
+    .experience-item,
+    .education-item {
+        grid-template-columns: 1fr;
+        gap: .75rem;
+    }
+
+    .experience-year,
+    .education-year {
+        font-size: .8rem;
+    }
+}
+
+@media (max-width: 600px) {
     .hero-grid {
         grid-template-columns: 1fr;
         grid-template-areas:
