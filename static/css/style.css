@@ -9,10 +9,19 @@
     --paper: #faf6f0;
     --accent: #d95d39;
     --accent-dark: #a8442a;
+    --accent-light: #f1ddd5;
     --line: #e3d9c9;
     --text-muted: #6b6459;
     --radius: 4px;
     --header-height: 4.5rem;
+
+    --space-small: clamp(0.75rem, 2vw, 1rem);
+    --space-medium: clamp(1rem, 3vw, 1.5rem);
+    --space-large: clamp(1.5rem, 4vw, 3rem);
+    --space-xl: clamp(2rem, 6vw, 5rem);
+
+    --container-padding: clamp(1rem, 4vw, 1.5rem);
+    --container-width: min(960px, 92vw);
 }
 
 html {
@@ -33,9 +42,9 @@ h1, .brand {
 }
 
 .container {
-    max-width: 960px;
+    max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 var(--container-padding);
 }
 
 .site-header {
@@ -44,14 +53,16 @@ h1, .brand {
     width: 100%;
     top: 0;
     z-index: 1000;
-    background-color: var(--paper); 
+    background-color: var(--paper);
+    height: var(--header-height); 
 }
 
 .site-header .container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
+    align-items: stretch;
+    height: 100%;
+    padding: 0 var(--container-padding);
 }
 
 .brand {
@@ -59,11 +70,16 @@ h1, .brand {
     font-weight: 700;
     color: var(--ink);
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .site-header nav {
     display: flex;
-    gap: 2rem;
+    gap: 0;
+    align-items: stretch;
+    height: 100%;
 }
 
 .site-header nav a {
@@ -74,16 +90,17 @@ h1, .brand {
     height: 100%;
     display: flex;
     align-items: center;
+    padding: 0 var(--space-small);
 }
 
 .site-header nav a:hover {
-    background-color: var(--accent);
+    background-color: var(--accent-light);
 }
 
 .hero {
     min-height: 100vh;
     position: sticky;    
-    padding: var(--header-height) 0 5rem;
+    padding: var(--header-height) var(--space-xl) 5rem;
 
     scroll-margin-top: var(--header-height);
     top: 0;
@@ -100,7 +117,7 @@ h1, .brand {
     grid-template-areas:
         "identity photo"
         "details  photo";
-    gap: 1.5rem 3rem;
+    gap: var(--space-medium) var(--space-large);
 }
 
 .hero-identity {
@@ -125,8 +142,8 @@ h1, .brand {
     line-height: 0.95;
 }
 
-.experience {
-    min-height: calc(100vh - var(--header-height));;
+.education {
+    min-height: calc(100vh - var(--header-height));
     position: relative;
     z-index: 2;
     background: white;
@@ -134,13 +151,13 @@ h1, .brand {
     will-change: transform;
 }
 
-.experience-grid {
+.education-grid {
     display: grid;
     grid-template-columns: 1.3fr 1fr;
-    gap: 1.5rem 3rem;
+    gap: var(--space-medium) var(--space-large);
     grid-template-areas: 
-        "experience-title"
-        "experience-detail";
+        "education-title"
+        "education-detail";
 }
 
 .bio {
@@ -218,13 +235,14 @@ h1, .brand {
 }
 
 .site-footer {
-    padding: 1.5rem;
+    padding: var(--space-medium);
     color: var(--text-muted);
     font-size: 0.85rem;
     border-top: 1px solid var(--line);
 }
 
 @media (max-width: 600px) {
+
     .hero-grid {
         grid-template-columns: 1fr;
         grid-template-areas:
@@ -234,7 +252,7 @@ h1, .brand {
     }
 
     .hero-photo {
-        max-width: 220px;
+        max-width: min(220px, 60vw);
     }
 
     .social-links {
