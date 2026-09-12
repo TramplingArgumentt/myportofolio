@@ -36,6 +36,12 @@ SECRET_KEY = 'django-insecure-6pj$ng(m3rhty3%9zg#5uy-pvaq1s8--m&117s0yfgl39=y*k2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://evan-andrian-myportofolio.pws.cs.ui.ac.id',
+]
+CSRF_COOKIE_SECURE    = True
+SESSION_COOKIE_SECURE = True
+
 
 # Application definition
 
