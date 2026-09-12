@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experiences - {{ name }}</title>
+    <title>Education - {{ name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -15,43 +15,39 @@
             <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="">Experience</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
                 <a href="{% url 'main:show_project' %}">Project</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
+                <a href="">Education</a>
                 <a href="{% url 'main:show_skill' %}">Skill</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="experience" id="experience">
+        <section class="education" id="education">
             <div class="container section-grid">
                 <div class="section-title">
-                    <span class="section-kicker">PERJALANAN SAYA SEJAUH INI</span>
-                    <h1>Experience</h1>
+                    <span class="section-kicker">RIWAYAT PENDIDIKAN</span>
+                    <h1>Education</h1>
                 </div>
 
-                <div class="experience-list">
-                    {% for experience in experience_list %}
-                    <article class="experience-item">
-                        <div class="experience-meta">
-                            <span class="experience-year">{{ experience.year }}</span>
-                            <div class="experience-category">
-                            {{ experience.get_category_display }}
-                            </div>
-                        </div>
-                        <div class="experience-content">
-                            <h2>{{ experience.title }}</h2>
-                            <p class="experience-org">{{ experience.affiliation }}</p>
+                <div class="education-list">
+                    {% for education in education_list %}
+                    <article class="education-item">
+                        <span class="education-year">{{ education.year_range }}</span>
+
+                        <div>
+                            <h2>{{ education.name }}</h2>
+                            <p class="education-degree">
+                                {{ education.degree }}
+                            </p>
                             <p>
-                                {{ experience.description }}
+                                {{ education.description }}
                             </p>
                         </div>
                     </article>
                     {% empty %}
-                        <p class="empty-state">
-                            Belum ada pengalaman yang ditambahkan.
-                        </p>
+                        <p class="empty-state">Belum ada education yang ditambahkan.</p>
                     {% endfor %}
                 </div>
             </div>
