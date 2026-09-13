@@ -160,7 +160,7 @@ h1, .brand {
 }
 
 .experience {
-    background: var(--paper);
+    background: white;
     position: relative;
     z-index: 2;
     padding: 7rem 0;
@@ -329,7 +329,7 @@ h1, .brand {
 }
 
 .education {
-    background: var(--paper);
+    background: white;
     position: relative;
     z-index: 2;
     padding: 7rem 0;

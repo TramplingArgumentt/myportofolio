@@ -27,6 +27,10 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 - Menambahkan tampilan website mengikuti instruksi Tutorial 1
 - Menambahkan section Experience, Project, Education, dan Skill
 
+### Week 2 - 14 September 2026 (Tugas 2)
+- Memindahkan section Experience, Project, Education, dan Skill ke template yang berbeda
+- Menerapkan MVT untuk data yang ditampilkan pada website
+
 ### Tugas 1
 
 1. Ya, saya menggunakan elemen <section> dan <article>. Penggunaan section saya gunakan untuk membagi halaman berdasarkan topik seperti Skill, Project, Experience, dan Education, sementara article digunakan untuk konten yang lebih spesifik di dalam satu section agar lebih rapi, contohnya pada konten Project. Tag <aside> tidak saya gunakan karena kompleksitas website yang masih tergolong sederhana sehingga tidak memerlukan fitur yang disediakan dari tag <aside>.
@@ -36,6 +40,37 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 Karena keterbatasan ruang pada tampilan mobile, kebanyakan konten yang semula disusun secara horizontal pada tampilan desktop disusun ulang secara vertikal agar muat ditampilkan. Kebanyakan padding juga dibuat lebih kecil menyesuaikan skala tampilan layar yang lebih kecil.
 
 3. Batasan yang saya rasakan adalah pada pembuatan header versi mobile. Pada static web murni, hamburger menu belum dapat diimplementasi, sehingga header pada versi mobile terasa sesak karena banyaknya menu yang ada. Pada iterasi proyek selanjutnya, saya ingin menambahkan hamburger menu pada versi mobile.
+
+### Tugas 2
+1. Ketika pengguna membuka halaman portofolio, browser mengirimkan HTTP Request ke Django. Request kemudian diterima oleh `urls.py proyek`, dan kemudian diteruskan ke `urls.py aplikasi` dengan include(). `urls.py proyek` berfungsi sebagai pengatur URL utama dan menentukan aplikasi mana yang bertanggung jawab menangani request tersebut. Setelah diteruskan, Django akan mencocokkan URL dengan pola URL yang ada lalu memanggil fungsi atau class view yang sesuai. View berperan sebagai penghubung request pengguna, data dari model, dan template yang akan dikirim kembali. Jika halaman membutuhkan data portofolio, view akan mengambilnya melalui model. Model adalah struktur data yang tersimpan pada database. Setelah mendapatkan data, view akan meneruskannya ke template. Template bertanggung jawab untuk menentukan bagaimana data ditampilkan dalam HTML. Django kemudian akan melakukan rendering template menjadi HTML dan dikirim sebagai HTTP Response, dan browser akan menampilkan HTML tersebut sebagai halaman portofolio.
+
+2. Karena model dan template memiliki tugas yang berbeda. Model bertanggung jawab terhadap data, sedangkan template bertanggung jawab terhadap bagaimana data ditampilkan. Jika data ditulis langsung pada template, setiap perubahan data mengharuskan developer mengubah kode HTML/template. Hal ini menjadi kurang efisien ketika jumlah data semakin banyak.
+
+Dengan menyimpan data pada model, template dapat menggunakan data secara dinamis. Misal untuk beberapa data, template dapat menggunakan Django Template Language untuk melakukan perulangan untuk menampilkan seluruh data. Ketika ada data baru, developer cukup menambahkan data tanpa mengubah struktur HTML secara manual.
+
+Perubahan pada database dapat dilakukan tanpa mengubah desain template, dan perubahan pada template dapat dilakukan tanpa mengubah data di database. Data yang tersimpan di model juga dapat digunakan pada fitur lain di masa depan.
+
+3. `makemigrations` digunakan untuk membuat file migration berdasarkan perubahan pada model di Django. File migration berisi instruksi perubahan struktur database yang perlu dilakukan.
+
+Sedangkan `migrate` digunakan untuk menerapkan instruksi pada file migration ke database sehingga struktur database sesuai dengan model terbaru.
+
+Contohnya, awalnya terdapat model Item
+
+```
+class Item(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=50, unique=True)
+```
+
+Tetapi kemudian saya menyadari bahwa ada class Tag yang berfungsi mirip dengan Item, sehingga saya memutuskan untuk menghapus class Item. Setelah menghapus class Item pada file `models.py`, saya menjalankan `python manage.py makemigrations main`. Pada file migration, tercatat 
+
+```
+migrations.DeleteModel(
+    name='Item',
+),
+```
+
+Kemudian saya menjalankan `python manage.py migrate`, perintah tersebut diterapkan pada database, sehingga Item pada database akan terhapus.
 
 ## AI Disclosure: 
 ### Tools
