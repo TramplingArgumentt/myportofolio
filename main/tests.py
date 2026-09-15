@@ -77,6 +77,39 @@ class ModelTest(TestCase):
 
         self.assertEqual(str(tag), "Django")
 
+    def test_projects_api_includes_tags_and_filters_by_name(self):
+        matching_project = Project.objects.create(
+            name="Portfolio Website",
+            description="A personal portfolio.",
+        )
+        other_project = Project.objects.create(
+            name="Weather App",
+            description="A weather application.",
+        )
+        tag = Tag.objects.create(name="Django")
+        matching_project.tags.add(tag)
+
+        response = self.client.get(
+            reverse("main:get_projects_json"),
+            {"title": "portfolio"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [
+            {
+                "model": "main.project",
+                "pk": str(matching_project.id),
+                "fields": {
+                    "name": "Portfolio Website",
+                    "description": "A personal portfolio.",
+                    "tags": [["Django"]],
+                    "project_url": "",
+                    "project_image_url": "",
+                },
+            }
+        ])
+        self.assertNotIn(str(other_project.id), response.content.decode())
+
     def test_project_string_and_tags(self):
         project = Project.objects.create(
             name="Portfolio",

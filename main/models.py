@@ -32,10 +32,14 @@ class Experience(models.Model):
         return self.ended_at is None
 
 class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        return (self.name,)
     
 class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
