@@ -91,7 +91,7 @@ class ModelTest(TestCase):
 
         response = self.client.get(
             reverse("main:get_projects_json"),
-            {"title": "portfolio"},
+            {"name": "portfolio"},
         )
 
         self.assertEqual(response.status_code, 200)

@@ -21,8 +21,8 @@
                       action="{% url 'main:show_projects' %}"
                       class="project-search">
                     <input type="search"
-                           name="title"
-                           value="{{ title_query }}"
+                           name="name"
+                           value="{{ name_query }}"
                            placeholder="Cari berdasarkan nama proyek"
                            class="project-search__input"
                            aria-label="Cari berdasarkan nama proyek">
@@ -67,7 +67,7 @@
                             </div>
                         </article>
                     {% empty %}
-                        {% if title_query %}
+                        {% if name_query %}
                             <p class="empty-state">Tidak ada proyek dengan nama tersebut.</p>
                         {% else %}
                             <p class="empty-state">Belum ada proyek yang ditambahkan.</p>

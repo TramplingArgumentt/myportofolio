@@ -24,16 +24,16 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 def show_projects(request):
-    title_query = request.GET.get("title", "").strip()
+    name_query = request.GET.get("name", "").strip()
     projects = Project.objects.prefetch_related("tags").all()
 
-    if title_query:
-        projects = projects.filter(name__icontains=title_query)
+    if name_query:
+        projects = projects.filter(name__icontains=name_query)
 
     context = {
         "name": "Evan Andrian",
         "project_list": projects,
-        "title_query": title_query,
+        "name_query": name_query,
     }
     return render(request, "project.html", context)
 
@@ -67,11 +67,11 @@ def create_project(request):
     return render(request, "projects_form.html", context)
 
 def get_projects_json(request):
-    title_query = request.GET.get("title", "").strip()
+    name_query = request.GET.get("name", "").strip()
     projects = Project.objects.prefetch_related("tags").all()
 
-    if title_query:
-        projects = projects.filter(name__icontains=title_query)
+    if name_query:
+        projects = projects.filter(name__icontains=name_query)
 
     projects_json = serializers.serialize(
         "json",
