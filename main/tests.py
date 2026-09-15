@@ -81,7 +81,6 @@ class ModelTest(TestCase):
         project = Project.objects.create(
             name="Portfolio",
             description="A personal portfolio.",
-            category="Web",
         )
         tag = Tag.objects.create(name="Django")
         project.tags.add(tag)

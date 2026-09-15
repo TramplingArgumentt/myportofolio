@@ -1,28 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} - Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container">
-            <a href="" class="brand">{{ name }}</a>
-            <nav>
-                <a href="">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_project' %}">Project</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
-                <a href="{% url 'main:show_skill' %}">Skill</a>
-            </nav>
-        </div>
-    </header>
-
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %}
+    <title>{{ name }} - Portofolio</title>
+{% endblock meta %}
+{% block content %}
     <main>
         <section class="hero" id="profile">
             <div class="container hero-grid">
@@ -32,7 +13,7 @@
                 </div>
                 <div class="hero-photo">
                     <div class="photo-block"></div>
-                    <img class="avatar" src="/static/img/Evan.jpg" alt="Photo of {{ name }}">
+                    <img class="avatar" src="{% static 'img/Evan.jpg' %}" alt="Photo of {{ name }}">
                 </div>
                 <div class="hero-details">
                     <p class="bio">{{ bio }}</p>
@@ -54,156 +35,5 @@
                 </div>
             </div>
         </section>
-
-        <!-- <section class="experience" id="experience">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-number">01</span>
-                    <h1>Experience</h1>
-                </div>
-
-                <div class="experience-list">
-                    <article class="experience-item">
-                        <div class="experience-year">2026</div>
-
-                        <div class="experience-content">
-                            <h2>IT Development Staff</h2>
-                            <p class="experience-org">PPMB KMBUI</p>
-                            <p>
-                                Contributed to the development and maintenance of
-                                digital systems and web-related projects.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="experience-item">
-                        <div class="experience-year">2025</div>
-
-                        <div class="experience-content">
-                            <h2>Web Development Open Class</h2>
-                            <p class="experience-org">Pekan RISTEK</p>
-                            <p>
-                                Participated in web development learning and project-based activities.
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="projects" id="projects">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-number">02</span>
-                    <h1>Projects</h1>
-                </div>
-
-                <div class="project-list">
-                    <article class="project-card">
-                        <div class="project-top">
-                            <span>01</span>
-                            <span>Web Development</span>
-                        </div>
-
-                        <h2>Personal Portfolio</h2>
-
-                        <p>
-                            A personal portfolio website showcasing my experience,
-                            projects, education, and technical skills.
-                        </p>
-
-                        <div class="project-tags">
-                            <span>HTML</span>
-                            <span>CSS</span>
-                            <span>Django</span>
-                        </div>
-
-                        <a href="#profile" class="project-link">
-                            View Project →
-                        </a>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="education" id="education">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-number">03</span>
-                    <h1>Education</h1>
-                </div>
-
-                <div class="education-list">
-                    <article class="education-item">
-                        <span class="education-year">2025 — Present</span>
-
-                        <div>
-                            <h2>Universitas Indonesia</h2>
-                            <p class="education-degree">
-                                Bachelor of Computer Science
-                            </p>
-                            <p>
-                                Faculty of Computer Science
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="education-item">
-                        <span class="education-year">2022 — 2025</span>
-
-                        <div>
-                            <h2>Senior High School</h2>
-                            <p>
-                                SMAS Cendana Mandau — Duri, Riau
-                            </p>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="skills" id="skills">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-number">04</span>
-                    <h1>Skills</h1>
-                </div>
-
-                <div class="skills-list">
-                    <div class="skill-group">
-                        <h2>Languages</h2>
-                        <div class="skill-items">
-                            <span>Java</span>
-                            <span>Python</span>
-                            <span>HTML</span>
-                            <span>CSS</span>
-                        </div>
-                    </div>
-
-                    <div class="skill-group">
-                        <h2>Frameworks</h2>
-                        <div class="skill-items">
-                            <span>Django</span>
-                        </div>
-                    </div>
-
-                    <div class="skill-group">
-                        <h2>Tools</h2>
-                        <div class="skill-items">
-                            <span>Git</span>
-                            <span>GitHub</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-
     </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
-        </div>
-    </footer>
-</body>
-</html>
+{% endblock content %}

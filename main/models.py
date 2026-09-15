@@ -42,8 +42,8 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     tags = models.ManyToManyField(Tag, blank=True, related_name='projects')
-    category = models.CharField(max_length=255)
-    url = models.TextField(blank=True)
+    project_url = models.URLField(blank=True)
+    project_image_url = models.URLField(blank=True, max_length=500)
     def __str__(self):
         return self.name
     

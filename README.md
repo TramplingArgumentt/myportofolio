@@ -14,7 +14,7 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 ## Fitur
 - Profile
 - Experience
-- Project
+- Projects
 - Education
 - Skills
 
