@@ -283,6 +283,7 @@ h1, .brand {
 .project-grid .experience-card {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .experience-card:hover {
@@ -342,7 +343,7 @@ h1, .brand {
     margin: 1rem 0;
     overflow-x: auto;
     padding-bottom: .25rem;
-    scrollbar-width: thin;
+    scrollbar-width: none;
 }
 
 .project-tags span {

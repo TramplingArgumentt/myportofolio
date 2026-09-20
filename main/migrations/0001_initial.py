@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('title', models.CharField(max_length=255)),
-                ('year', models.IntegerField(default=main.models.current_year)),
                 ('affiliation', models.TextField()),
                 ('description', models.TextField()),
                 ('category', models.CharField(choices=[('internship', 'Internship'), ('research', 'Research'), ('volunteer', 'Volunteer'), ('part-time', 'Part-Time'), ('full-time', 'Full-Time'), ('freelance', 'Freelance')], default='full-time', max_length=20)),

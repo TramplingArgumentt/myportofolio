@@ -5,12 +5,29 @@
 {% endblock meta %}
 {% block content %}
     <main>
-        <section class="skills" id="skills">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-kicker">KEMAMPUAN YANG SAYA KUASAI</span>
+        <section class="experience-section" id="skills">
+            <div class="container">
+                <p class="section-kicker">Kemampuan yang saya kuasai</p>
+                <div class="project-header">
                     <h1>Skills</h1>
+                    <a href="{% url 'main:create_skill' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Skill
+                    </a>
                 </div>
+
+                <form method="get"
+                      action="{% url 'main:show_skill' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="name"
+                           value="{{ name_query }}"
+                           placeholder="Cari berdasarkan nama skill"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama skill">
+                    <button type="submit" class="button">Cari</button>
+                </form>
 
                 <div class="skills-list">
                     {% for skill in skill_list %}
@@ -21,9 +38,18 @@
                             <span>{{ tag }}</span>
                             {% endfor %}
                         </div>
+                        <div class="project-card-actions">
+                            <div class="project-actions">
+                                {% include "components/skill_delete_modal.html" with skill=skill %}
+                            </div>
+                        </div>
                     </div>
                     {% empty %}
-                        <p class="empty-state">Belum ada skill yang ditambahkan.</p>
+                        {% if name_query %}
+                            <p class="empty-state">Tidak ada skill dengan nama tersebut.</p>
+                        {% else %}
+                            <p class="empty-state">Belum ada skill yang ditambahkan.</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

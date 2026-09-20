@@ -1,9 +1,5 @@
 import uuid
 from django.db import models
-from datetime import date
-
-def current_year():
-    return date.today().year
 
 class Experience(models.Model):
     EXPERIENCE_CHOICES = [
@@ -17,12 +13,10 @@ class Experience(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    year = models.IntegerField(default=current_year)
-    affiliation = models.TextField()
     description = models.TextField()
     category = models.CharField(max_length=20, choices=EXPERIENCE_CHOICES, default='full-time')
     thumbnail = models.URLField(blank=True, null=True)
-    started_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(blank=True, null=True)
     ended_at = models.DateTimeField(blank=True, null=True)
     def __str__(self):
         return self.title

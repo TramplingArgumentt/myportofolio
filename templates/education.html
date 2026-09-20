@@ -5,17 +5,40 @@
 {% endblock meta %}
 {% block content %}
     <main>
-        <section class="education" id="education">
-            <div class="container section-grid">
-                <div class="section-title">
-                    <span class="section-kicker">RIWAYAT PENDIDIKAN</span>
+        <section class="experience-section" id="education">
+            <div class="container">
+                <p class="section-kicker">Riwayat pendidikan saya</p>
+                <div class="project-header">
                     <h1>Education</h1>
+                    <a href="{% url 'main:create_education' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Education
+                    </a>
                 </div>
 
+                <form method="get"
+                      action="{% url 'main:show_education' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="name"
+                           value="{{ name_query }}"
+                           placeholder="Cari berdasarkan nama education"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama education">
+                    <button type="submit" class="button">Cari</button>
+                </form>
+                
                 <div class="education-list">
                     {% for education in education_list %}
                     <article class="education-item">
-                        <span class="education-year">{{ education.year_range }}</span>
+                        <span class="education-year">{{ education.year_range }}
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    {% include "components/education_delete_modal.html" with education=education %}
+                                </div>
+                            </div>
+                        </span>
 
                         <div>
                             <h2>{{ education.name }}</h2>
@@ -28,7 +51,11 @@
                         </div>
                     </article>
                     {% empty %}
-                        <p class="empty-state">Belum ada education yang ditambahkan.</p>
+                        {% if name_query %}
+                            <p class="empty-state">Tidak ada education dengan nama tersebut.</p>
+                        {% else %}
+                            <p class="empty-state">Belum ada education yang ditambahkan.</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

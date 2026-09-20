@@ -74,10 +74,10 @@ Kemudian saya menjalankan `python manage.py migrate`, perintah tersebut diterapk
 
 ## AI Disclosure: 
 ### Tools
-ChatGPT, Claude
+ChatGPT, Claude, Copilot
 
 ### Penggunaan AI
-AI saya gunakan terutama sebagai coding assistant untuk membantu menerjemahkan rancangan dan ide layout yang saya jelaskan menjadi implementasi HTML/CSS. Saya tetap menentukan struktur website, section yang dibuat, desain yang diinginkan, serta melakukan pengujian terhadap hasil implementasi. Kode yang diberikan AI tidak langsung saya gunakan tanpa pemeriksaan karena beberapa solusi yang diberikan tidak sesuai dengan struktur proyek atau menghasilkan perilaku yang tidak diinginkan.
+AI saya gunakan terutama sebagai coding assistant untuk membantu menerjemahkan rancangan dan ide layout yang saya jelaskan menjadi implementasi HTML/CSS. Saya tetap menentukan struktur website, section yang dibuat, desain yang diinginkan, serta melakukan pengujian terhadap hasil implementasi. Kode yang diberikan AI tidak langsung saya gunakan tanpa pemeriksaan karena beberapa solusi yang diberikan tidak sesuai dengan struktur proyek atau menghasilkan perilaku yang tidak diinginkan. AI juga digunakan dalam proses debugging ketika saya menemui error yang tidak saya pahami.
 
 ### Strategi Prompting
 Strategi prompting yang digunakan adalah dengan menyalin dan menempel kode yang saya miliki kepada AI ditambah dengan penjelasan penambahan atau perubahan yang saya inginkan. Meski demikian, AI tersebut tetap melakukan beberapa kesalahan (terutama ChatGPT).
