@@ -32,10 +32,10 @@
                 <div class="skills-list">
                     {% for skill in skill_list %}
                     <div class="skill-group">
-                        <h2>{{ skill.title }}</h2>
+                        <h2 class="text-break">{{ skill.title }}</h2>
                         <div class="skill-items">
                             {% for tag in skill.tags.all %}
-                            <span>{{ tag }}</span>
+                            <span class="text-break">{{ tag }}</span>
                             {% endfor %}
                         </div>
                         <div class="project-card-actions">

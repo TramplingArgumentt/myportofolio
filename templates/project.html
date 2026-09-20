@@ -40,17 +40,17 @@
                                 >
                             {% endif %}
 
-                            <h2>{{ project.name }}</h2>
+                            <h2 class="text-break">{{ project.name }}</h2>
 
                             {% if project.tags.all %}
                                 <div class="project-tags">
                                     {% for tag in project.tags.all %}
-                                        <span>{{ tag.name }}</span>
+                                        <span class="text-break">{{ tag.name }}</span>
                                     {% endfor %}
                                 </div>
                             {% endif %}
 
-                            <p class="experience-description">{{ project.description }}</p>
+                            <p class="experience-description text-break">{{ project.description }}</p>
 
                             <div class="project-card-actions">
                                 <div class="project-actions">

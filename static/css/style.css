@@ -316,6 +316,11 @@ h1, .brand {
     margin: 0;
 }
 
+.text-break {
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
 .experience-description,
 .empty-state {
     color: var(--text-muted);
