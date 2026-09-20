@@ -42,6 +42,7 @@ Karena keterbatasan ruang pada tampilan mobile, kebanyakan konten yang semula di
 3. Batasan yang saya rasakan adalah pada pembuatan header versi mobile. Pada static web murni, hamburger menu belum dapat diimplementasi, sehingga header pada versi mobile terasa sesak karena banyaknya menu yang ada. Pada iterasi proyek selanjutnya, saya ingin menambahkan hamburger menu pada versi mobile.
 
 ### Tugas 2
+
 1. Ketika pengguna membuka halaman portofolio, browser mengirimkan HTTP Request ke Django. Request kemudian diterima oleh `urls.py proyek`, dan kemudian diteruskan ke `urls.py aplikasi` dengan include(). `urls.py proyek` berfungsi sebagai pengatur URL utama dan menentukan aplikasi mana yang bertanggung jawab menangani request tersebut. Setelah diteruskan, Django akan mencocokkan URL dengan pola URL yang ada lalu memanggil fungsi atau class view yang sesuai. View berperan sebagai penghubung request pengguna, data dari model, dan template yang akan dikirim kembali. Jika halaman membutuhkan data portofolio, view akan mengambilnya melalui model. Model adalah struktur data yang tersimpan pada database. Setelah mendapatkan data, view akan meneruskannya ke template. Template bertanggung jawab untuk menentukan bagaimana data ditampilkan dalam HTML. Django kemudian akan melakukan rendering template menjadi HTML dan dikirim sebagai HTTP Response, dan browser akan menampilkan HTML tersebut sebagai halaman portofolio.
 
 2. Karena model dan template memiliki tugas yang berbeda. Model bertanggung jawab terhadap data, sedangkan template bertanggung jawab terhadap bagaimana data ditampilkan. Jika data ditulis langsung pada template, setiap perubahan data mengharuskan developer mengubah kode HTML/template. Hal ini menjadi kurang efisien ketika jumlah data semakin banyak.
@@ -71,6 +72,20 @@ migrations.DeleteModel(
 ```
 
 Kemudian saya menjalankan `python manage.py migrate`, perintah tersebut diterapkan pada database, sehingga Item pada database akan terhapus.
+
+### Tugas 3
+
+1. ModelForm digunakan karena form terhubung langsung dengan model Django. Struktur field pada form dengan menggunakan ModelForm mengikuti field pada model, sehingga tidak perlu didefinisikan lagi secara manual. ModelForm juga menyediakan validasi berdasarkan model sehingga data yang dikirim diperiksa sebelum digunakan di database.
+
+`{% csrf_token %}` digunakan untuk melindungi form dari serangan Cross-Site Request Forgery (CSRF). Pada CSRF, pengguna dapat secara tidak sadar mengirim request ke website melalui situs lain. Django memberi token unik pada form dan memeriksa token ketika request dikirim. Jika token tidak sesuai, Django akan menolak request tersebut. `{% csrf_token %}` penting digunakan terutama pada form yang menggunakan metode `POST`, karena request tersebut dapat mengubah data pada server.
+
+2. JSON lebih banyak digunakan karena formatnya relatif sederhana, dan mudah diproses oleh JavaScript. Struktur JSON mengunakan pasangan key dan value serta array, sehingga bentuk datanya cukup dekat dengan struktur object dan array dalam pemrograman.
+
+Dibanding XML, JSON umumnya membutuhkan lebih sedikit karaker untuk merepresentasikan data karena XML menggunakan tag pembuka dan penutup untuk setiap elemen. Hal tersebut membuat JSON lebih ringkas ketika digunakan melalui API. JSON juga didukung secara luas oleh berbagai bahasa pemrograman dan framework modern.
+
+3. Ketika pengguna mengakses URL ke suatu view, Django akan melakukan routing melalui `urls.py` menuju fungsi view yang sesuai. View kemudian mengambil data portofolio dari database melalui Django ORM. Tetapi, hasil dari query tersebut adalah objek model Django atau `QuerySet`, bukan data JSON yang dapat langsung dikirim sebagai response API. Frontend atau client tidak memahami objek model Django secara langsung. Client membutuhkan format data standar yang dapat dikirim melalui HTTP.
+
+Oleh karena itu, data perlu diproses dengan serialization. Serialization adalah proses mengubah objek atau struktur data yang digunakan oleh aplikasi menjadi format data yang dapat disimpan atau dikirim, dalam kasus ini menjadi format JSON. Setelah dilakukan serialization, hasilnya dikembalikan melalui JsonResponse.
 
 ## AI Disclosure: 
 ### Tools
