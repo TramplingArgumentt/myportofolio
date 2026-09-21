@@ -217,3 +217,83 @@ def delete_skill(request, skill_id):
         return redirect("main:show_skill")
 
     return redirect("main:show_skill")
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Project berhasil diedit!")
+            return redirect('main:show_projects')
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        "name": "Evan Andrian",
+        "form": form,
+        "project": project,
+    }
+
+    return render(request, "edit_project.html", context)
+
+def edit_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        form = ExperienceForm(request.POST, instance=experience)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Experience berhasil diedit!")
+            return redirect('main:show_experience')
+    else:
+        form = ExperienceForm(instance=experience)
+
+    context = {
+        "name": "Evan Andrian",
+        "form": form,
+        "experience": experience,
+    }
+
+    return render(request, "edit_experience.html", context)
+
+def edit_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        form = EducationForm(request.POST, instance=education)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Education berhasil diedit!")
+            return redirect('main:show_education')
+    else:
+        form = EducationForm(instance=education)
+
+    context = {
+        "name": "Evan Andrian",
+        "form": form,
+        "education": education,
+    }
+
+    return render(request, "edit_education.html", context)
+
+def edit_skill(request, skill_id):
+    skill = get_object_or_404(Skill, pk=skill_id)
+
+    if request.method == "POST":
+        form = SkillForm(request.POST, instance=skill)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Skill berhasil diedit!")
+            return redirect('main:show_skill')
+    else:
+        form = SkillForm(instance=skill)
+
+    context = {
+        "name": "Evan Andrian",
+        "form": form,
+        "skill": skill,
+    }
+
+    return render(request, "edit_skill.html", context)

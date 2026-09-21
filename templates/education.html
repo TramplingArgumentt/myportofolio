@@ -35,6 +35,12 @@
                         <span class="education-year">{{ education.year_range }}
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    <a href="{% url 'main:edit_education' education_id=education.id %}"
+                                        class="button"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        Edit Education
+                                    </a>
                                     {% include "components/education_delete_modal.html" with education=education %}
                                 </div>
                             </div>

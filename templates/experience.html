@@ -54,6 +54,12 @@
                             {% endif %}
                             <div class="project-card-actions">
                                 <div class="project-actions">
+                                    <a href="{% url 'main:edit_experience' experience_id=experience.id %}"
+                                        class="button"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        Edit Experience
+                                    </a>
                                     {% include "components/experience_delete_modal.html" with experience=experience %}
                                 </div>
                             </div>

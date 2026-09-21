@@ -40,6 +40,12 @@
                         </div>
                         <div class="project-card-actions">
                             <div class="project-actions">
+                                <a href="{% url 'main:edit_skill' skill_id=skill.id %}"
+                                    class="button"
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    Edit Skill
+                                </a>
                                 {% include "components/skill_delete_modal.html" with skill=skill %}
                             </div>
                         </div>

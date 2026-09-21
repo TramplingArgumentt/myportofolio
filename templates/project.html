@@ -62,6 +62,12 @@
                                             Lihat Proyek
                                         </a>
                                     {% endif %}
+                                        <a href="{% url 'main:edit_project' project_id=project.id %}"
+                                           class="button"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            Edit Proyek
+                                        </a>
                                     {% include "components/project_delete_modal.html" with project=project %}
                                 </div>
                             </div>
