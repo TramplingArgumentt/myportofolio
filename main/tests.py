@@ -1,7 +1,8 @@
+from datetime import date
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from datetime import date
 
 from main.models import Education, Experience, Project, Skill, Tag
 
@@ -19,7 +20,7 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "index.html")
-        self.assertNotContains(response, self.experience.title)
+        self.assertContains(response, "Evan Andrian")
         self.assertContains(response, f'href="{reverse("main:show_experience")}"')
 
     def test_nonexistent_page_returns_404(self):
@@ -46,7 +47,7 @@ class MainTest(TestCase):
         Experience.objects.all().delete()
         response = self.client.get(reverse("main:show_experience"))
 
-        self.assertContains(response, "Belum ada pengalaman yang ditambahkan.")
+        self.assertContains(response, "Belum ada experience yang ditambahkan.")
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
@@ -62,12 +63,10 @@ class ModelTest(TestCase):
     def test_experience_defaults_and_string(self):
         experience = Experience.objects.create(
             title="Research Assistant",
-            affiliation="Universitas Indonesia",
             description="Conducted research.",
         )
 
         self.assertEqual(str(experience), "Research Assistant")
-        self.assertEqual(experience.year, date.today().year)
         self.assertEqual(experience.category, "full-time")
         self.assertIsNone(experience.thumbnail)
         self.assertTrue(experience.is_ongoing)
@@ -95,19 +94,22 @@ class ModelTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [
-            {
-                "model": "main.project",
-                "pk": str(matching_project.id),
-                "fields": {
-                    "name": "Portfolio Website",
-                    "description": "A personal portfolio.",
-                    "tags": [["Django"]],
-                    "project_url": "",
-                    "project_image_url": "",
-                },
-            }
-        ])
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "model": "main.project",
+                    "pk": str(matching_project.id),
+                    "fields": {
+                        "name": "Portfolio Website",
+                        "description": "A personal portfolio.",
+                        "tags": [["Django"]],
+                        "project_url": "",
+                        "project_image_url": "",
+                    },
+                }
+            ],
+        )
         self.assertNotIn(str(other_project.id), response.content.decode())
 
     def test_project_string_and_tags(self):

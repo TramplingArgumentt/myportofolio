@@ -10,11 +10,13 @@
                 <p class="section-kicker">Kemampuan yang saya kuasai</p>
                 <div class="project-header">
                     <h1>Skills</h1>
-                    <a href="{% url 'main:create_skill' %}"
-                       class="button project-add-button">
-                        <span aria-hidden="true">+</span>
-                        Tambah Skill
-                    </a>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'main:create_skill' %}"
+                        class="button project-add-button">
+                            <span aria-hidden="true">+</span>
+                            Tambah Skill
+                        </a>
+                    {% endif %}
                 </div>
 
                 <form method="get"
@@ -40,13 +42,15 @@
                         </div>
                         <div class="project-card-actions">
                             <div class="project-actions">
-                                <a href="{% url 'main:edit_skill' skill_id=skill.id %}"
-                                    class="button"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                    Edit Skill
-                                </a>
-                                {% include "components/skill_delete_modal.html" with skill=skill %}
+                                {% if user.is_superuser %}
+                                    <a href="{% url 'main:edit_skill' skill_id=skill.id %}"
+                                        class="button"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        Edit Skill
+                                    </a>
+                                    {% include "components/skill_delete_modal.html" with skill=skill %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>

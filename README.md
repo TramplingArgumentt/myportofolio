@@ -31,6 +31,10 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 - Memindahkan section Experience, Project, Education, dan Skill ke template yang berbeda
 - Menerapkan MVT untuk data yang ditampilkan pada website
 
+### Week 3 - 21 September 2026 (Tugas 3)
+- Menerapkan ModelForm untuk menambahkan data
+- Menerapkan fitur edit dan delete data pada website
+
 ### Tugas 1
 
 1. Ya, saya menggunakan elemen <section> dan <article>. Penggunaan section saya gunakan untuk membagi halaman berdasarkan topik seperti Skill, Project, Experience, dan Education, sementara article digunakan untuk konten yang lebih spesifik di dalam satu section agar lebih rapi, contohnya pada konten Project. Tag <aside> tidak saya gunakan karena kompleksitas website yang masih tergolong sederhana sehingga tidak memerlukan fitur yang disediakan dari tag <aside>.
