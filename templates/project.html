@@ -65,13 +65,15 @@
                                         </a>
                                     {% endif %}
                                     {% include "components/project_star.html" with project=project %}
-                                    {% if user.is_superuser %}
+                                    {% if perms.main.change_project %}
                                         <a href="{% url 'main:edit_project' project_id=project.id %}"
-                                           class="button"
-                                           target="_blank"
-                                           rel="noopener noreferrer">
+                                            class="button"
+                                            target="_blank"
+                                            rel="noopener noreferrer">
                                             Edit Proyek
                                         </a>
+                                    {% endif %}
+                                    {% if user.is_superuser %}
                                         {% include "components/project_delete_modal.html" with project=project %}
                                     {% endif %}
                                 </div>

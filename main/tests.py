@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -60,6 +61,79 @@ class MainTest(TestCase):
 
 
 class ModelTest(TestCase):
+    def test_toggle_star_supports_all_starable_models(self):
+        user = User.objects.create_user(username="star-user", password="test-password")
+        self.client.force_login(user)
+        targets = [
+            (
+                "toggle_project_star",
+                Project.objects.create(name="Portfolio", description="A portfolio."),
+            ),
+            (
+                "toggle_experience_star",
+                Experience.objects.create(title="Internship", description="Worked on a project."),
+            ),
+            (
+                "toggle_education_star",
+                Education.objects.create(
+                    name="University",
+                    description="Computer science degree.",
+                    started_at=date(2025, 8, 1),
+                ),
+            ),
+            ("toggle_skill_star", Skill.objects.create(title="Python")),
+        ]
+
+        for route_name, item in targets:
+            with self.subTest(model=route_name):
+                response = self.client.post(reverse(f"main:{route_name}", args=[item.id]))
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue(item.starred_by.filter(pk=user.pk).exists())
+
+                self.client.post(reverse(f"main:{route_name}", args=[item.id]))
+                self.assertFalse(item.starred_by.filter(pk=user.pk).exists())
+
+    def test_toggle_star_rejects_get_requests(self):
+        user = User.objects.create_user(username="star-user", password="test-password")
+        self.client.force_login(user)
+        project = Project.objects.create(name="Portfolio", description="A portfolio.")
+
+        response = self.client.get(
+            reverse("main:toggle_project_star", args=[project.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
+        self.assertFalse(project.starred_by.filter(pk=user.pk).exists())
+
+    def test_experience_json_filters_by_requested_name(self):
+        matching = Experience.objects.create(
+            title="Research Assistant",
+            description="Conducted research.",
+        )
+        Experience.objects.create(title="Teaching Assistant", description="Helped students.")
+
+        response = self.client.get(reverse("main:get_experience_json"), {"name": "research"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([item["pk"] for item in response.json()], [str(matching.id)])
+
+    def test_education_json_filters_by_requested_name(self):
+        matching = Education.objects.create(
+            name="University of Indonesia",
+            description="Computer science degree.",
+            started_at=date(2025, 8, 1),
+        )
+        Education.objects.create(
+            name="High School",
+            description="Secondary education.",
+            started_at=date(2021, 7, 1),
+        )
+
+        response = self.client.get(reverse("main:get_education_json"), {"name": "university"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([item["pk"] for item in response.json()], [str(matching.id)])
+
     def test_experience_defaults_and_string(self):
         experience = Experience.objects.create(
             title="Research Assistant",
@@ -106,6 +180,7 @@ class ModelTest(TestCase):
                         "tags": [["Django"]],
                         "project_url": "",
                         "project_image_url": "",
+                        "starred_by": [],
                     },
                 }
             ],

@@ -35,6 +35,10 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 - Menerapkan ModelForm untuk menambahkan data
 - Menerapkan fitur edit dan delete data pada website
 
+### Week 4 - 28 September 2026 (Tugas 4)
+- Menerapkan autentikasi dan otorisasi untuk mengelola data
+- Menerapkan session dan cookies 
+
 ### Tugas 1
 
 1. Ya, saya menggunakan elemen <section> dan <article>. Penggunaan section saya gunakan untuk membagi halaman berdasarkan topik seperti Skill, Project, Experience, dan Education, sementara article digunakan untuk konten yang lebih spesifik di dalam satu section agar lebih rapi, contohnya pada konten Project. Tag <aside> tidak saya gunakan karena kompleksitas website yang masih tergolong sederhana sehingga tidak memerlukan fitur yang disediakan dari tag <aside>.

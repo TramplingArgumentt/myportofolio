@@ -19,6 +19,8 @@ class Experience(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     started_at = models.DateTimeField(blank=True, null=True)
     ended_at = models.DateTimeField(blank=True, null=True)
+    starred_by = models.ManyToManyField(User, related_name='starred_experience', blank=True)
+
     def __str__(self):
         return self.title
 
@@ -43,7 +45,7 @@ class Project(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, related_name='projects')
     project_url = models.URLField(blank=True)
     project_image_url = models.URLField(blank=True, max_length=500)
-    starred_by = models.ManyToManyField(User, related_name='starred_projects', blank=True   )
+    starred_by = models.ManyToManyField(User, related_name='starred_projects', blank=True)
     def __str__(self):
         return self.name
     
@@ -54,6 +56,8 @@ class Education(models.Model):
     description = models.TextField()
     started_at = models.DateField()
     ended_at = models.DateField(blank=True, null=True)
+    starred_by = models.ManyToManyField(User, related_name='starred_education', blank=True)
+
     def __str__(self):
         return self.name
     
@@ -70,6 +74,7 @@ class Skill(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     tags = models.ManyToManyField(Tag, blank=True, related_name='skills')
+    starred_by = models.ManyToManyField(User, related_name='starred_skill', blank=True)
 
     def __str__(self):
         return self.title
