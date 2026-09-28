@@ -1,16 +1,13 @@
 {% extends "base.html" %}
-{% load static %}
 {% block meta %}
-    <title>Edit Project - {{ name }}</title>
+    <title>{{ page_title }} - {{ name }}</title>
 {% endblock meta %}
 {% block content %}
     <main>
         <section class="experience-section">
             <div class="container">
-                <h1>Edit Projects</h1>
-                <form method="post"
-                      action="{% url 'main:edit_project' project_id=project.id %}"
-                      class="project-form">
+                <h1>{{ heading }}</h1>
+                <form method="post" action="{{ form_action }}" class="project-form">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group">
@@ -21,8 +18,8 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="button">Simpan Perubahan</button>
-                    <a href="{% url 'main:show_projects' %}" class="button button-secondary">Batal</a>
+                    <button type="submit" class="button">{{ submit_label }}</button>
+                    <a href="{{ cancel_url }}" class="button button-secondary">Batal</a>
                 </form>
             </div>
         </section>

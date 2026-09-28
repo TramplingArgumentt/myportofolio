@@ -6,6 +6,7 @@ from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from main.forms import EducationForm, ExperienceForm, ProjectForm, SkillForm
 from main.models import Experience, Project, Education, Skill
@@ -116,6 +117,18 @@ def show_skill(request):
     }
     return render(request, "skill.html", context)
 
+def _render_form_page(request, form, page_title, heading, form_action, cancel_url, submit_label):
+    context = {
+        "name": "Evan Andrian",
+        "form": form,
+        "page_title": page_title,
+        "heading": heading,
+        "form_action": form_action,
+        "cancel_url": cancel_url,
+        "submit_label": submit_label,
+    }
+    return render(request, "form_page.html", context)
+
 @login_required(login_url="/login/")
 def create_project(request):
     if not request.user.is_superuser:
@@ -128,11 +141,15 @@ def create_project(request):
         messages.success(request, "Project baru berhasil ditambahkan!")
         return redirect("main:show_projects")
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-    }
-    return render(request, "projects_form.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Add Project",
+        heading="Add New Projects",
+        form_action=reverse("main:create_project"),
+        cancel_url=reverse("main:show_projects"),
+        submit_label="Tambah Project",
+    )
 
 @login_required(login_url="/login/")
 def create_experience(request):
@@ -145,11 +162,15 @@ def create_experience(request):
         messages.success(request, "Experience baru berhasil ditambahkan!")
         return redirect("main:show_experience")
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-    }
-    return render(request, "experience_form.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Add Experience",
+        heading="Add New Experience",
+        form_action=reverse("main:create_experience"),
+        cancel_url=reverse("main:show_experience"),
+        submit_label="Tambah Experience",
+    )
 
 @login_required(login_url="/login/")
 def create_education(request):
@@ -162,11 +183,15 @@ def create_education(request):
         messages.success(request, "Education baru berhasil ditambahkan!")
         return redirect("main:show_education")
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-    }
-    return render(request, "education_form.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Add Education",
+        heading="Add New Education",
+        form_action=reverse("main:create_education"),
+        cancel_url=reverse("main:show_education"),
+        submit_label="Tambah Education",
+    )
 
 @login_required(login_url="/login/")
 def create_skill(request):
@@ -179,11 +204,15 @@ def create_skill(request):
         messages.success(request, "Skill baru berhasil ditambahkan!")
         return redirect("main:show_skill")
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-    }
-    return render(request, "skill_form.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Add Skill",
+        heading="Add New Skill",
+        form_action=reverse("main:create_skill"),
+        cancel_url=reverse("main:show_skill"),
+        submit_label="Tambah Skill",
+    )
 
 def get_projects_json(request):
     name_query = request.GET.get("name", "").strip()
@@ -283,13 +312,15 @@ def edit_project(request, project_id):
     else:
         form = ProjectForm(instance=project)
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-        "project": project,
-    }
-
-    return render(request, "edit_project.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Edit Project",
+        heading="Edit Projects",
+        form_action=reverse("main:edit_project", kwargs={"project_id": project.id}),
+        cancel_url=reverse("main:show_projects"),
+        submit_label="Simpan Perubahan",
+    )
 
 @login_required(login_url="/login/")
 @permission_required('main.change_experience', raise_exception=True)
@@ -305,13 +336,15 @@ def edit_experience(request, experience_id):
     else:
         form = ExperienceForm(instance=experience)
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-        "experience": experience,
-    }
-
-    return render(request, "edit_experience.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Edit Experience",
+        heading="Edit Experience",
+        form_action=reverse("main:edit_experience", kwargs={"experience_id": experience.id}),
+        cancel_url=reverse("main:show_experience"),
+        submit_label="Simpan Perubahan",
+    )
 
 @login_required(login_url="/login/")
 @permission_required('main.change_education', raise_exception=True)
@@ -327,13 +360,15 @@ def edit_education(request, education_id):
     else:
         form = EducationForm(instance=education)
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-        "education": education,
-    }
-
-    return render(request, "edit_education.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Edit Education",
+        heading="Edit Education",
+        form_action=reverse("main:edit_education", kwargs={"education_id": education.id}),
+        cancel_url=reverse("main:show_education"),
+        submit_label="Simpan Perubahan",
+    )
 
 @login_required(login_url="/login/")
 @permission_required('main.change_skill', raise_exception=True)
@@ -349,13 +384,15 @@ def edit_skill(request, skill_id):
     else:
         form = SkillForm(instance=skill)
 
-    context = {
-        "name": "Evan Andrian",
-        "form": form,
-        "skill": skill,
-    }
-
-    return render(request, "edit_skill.html", context)
+    return _render_form_page(
+        request,
+        form,
+        page_title="Edit Skill",
+        heading="Edit Skill",
+        form_action=reverse("main:edit_skill", kwargs={"skill_id": skill.id}),
+        cancel_url=reverse("main:show_skill"),
+        submit_label="Simpan Perubahan",
+    )
 
 @login_required(login_url="/login/")
 @require_POST

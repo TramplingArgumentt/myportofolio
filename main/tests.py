@@ -61,6 +61,48 @@ class MainTest(TestCase):
 
 
 class ModelTest(TestCase):
+    def test_create_and_edit_views_share_form_page(self):
+        admin = User.objects.create_superuser(
+            username="form-admin",
+            email="form-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+        project = Project.objects.create(name="Portfolio", description="A portfolio.")
+        experience = Experience.objects.create(title="Internship", description="Worked on a project.")
+        education = Education.objects.create(
+            name="University",
+            description="Computer science degree.",
+            started_at=date(2025, 8, 1),
+        )
+        skill = Skill.objects.create(title="Python")
+        form_pages = [
+            ("create_project", {}, "show_projects"),
+            ("create_experience", {}, "show_experience"),
+            ("create_education", {}, "show_education"),
+            ("create_skill", {}, "show_skill"),
+            ("edit_project", {"project_id": project.id}, "show_projects"),
+            ("edit_experience", {"experience_id": experience.id}, "show_experience"),
+            ("edit_education", {"education_id": education.id}, "show_education"),
+            ("edit_skill", {"skill_id": skill.id}, "show_skill"),
+        ]
+
+        for form_route, route_kwargs, cancel_route in form_pages:
+            with self.subTest(route=form_route):
+                response = self.client.get(
+                    reverse(f"main:{form_route}", kwargs=route_kwargs),
+                )
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "form_page.html")
+                self.assertEqual(
+                    response.context["form_action"],
+                    reverse(f"main:{form_route}", kwargs=route_kwargs),
+                )
+                self.assertEqual(
+                    response.context["cancel_url"],
+                    reverse(f"main:{cancel_route}"),
+                )
+
     def test_delete_modal_renders_correct_route_for_each_model(self):
         admin = User.objects.create_superuser(
             username="modal-admin",
