@@ -37,7 +37,7 @@
                         <span class="education-year">{{ education.year_range }}
                             <div class="project-card-actions">
                                 <div class="project-actions">
-                                    {% include "components/education_star.html" with education=education %}
+                                    {% include "components/star.html" with item=education star_url_name="main:toggle_education_star" %}
                                     {% if perms.main.change_education %}
                                         <a href="{% url 'main:edit_education' education_id=education.id %}"
                                             class="button"
@@ -47,7 +47,7 @@
                                         </a>
                                     {% endif %}
                                     {% if user.is_superuser %}
-                                        {% include "components/education_delete_modal.html" with education=education %}
+                                        {% include "components/delete_modal.html" with item=education delete_url_name="main:delete_education" %}
                                     {% endif %}
                                 </div>
                             </div>

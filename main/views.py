@@ -244,56 +244,30 @@ def get_skill_json(request):
     return HttpResponse(skill_json, content_type="application/json")
 
 @login_required(login_url="/login/")
-def delete_project(request, project_id):
+def delete_item(request, model_type, object_id):
     if not request.user.is_superuser:
         raise PermissionDenied
-    project = get_object_or_404(Project, pk=project_id)
+
+    item_targets = {
+        "project": (Project, "main:show_projects"),
+        "experience": (Experience, "main:show_experience"),
+        "education": (Education, "main:show_education"),
+        "skill": (Skill, "main:show_skill"),
+    }
+
+    target = item_targets.get(model_type)
+    if target is None:
+        raise Http404
+    
+    model, redirect_name = target
+    item = get_object_or_404(model, pk=object_id)
 
     if request.method == "POST":
-        project.delete()
-        messages.success(request, "Project berhasil dihapus!")
-        return redirect("main:show_projects")
+        item.delete()
+        messages.success(request, f"{model.__name__} berhasil dihapus!")
+        return redirect(redirect_name)
 
-    return redirect("main:show_projects")
-
-@login_required(login_url="/login/")
-def delete_experience(request, experience_id):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    experience = get_object_or_404(Experience, pk=experience_id)
-
-    if request.method == "POST":
-        experience.delete()
-        messages.success(request, "Experience berhasil dihapus!")
-        return redirect("main:show_experience")
-
-    return redirect("main:show_experience")
-
-@login_required(login_url="/login/")
-def delete_education(request, education_id):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    education = get_object_or_404(Education, pk=education_id)
-
-    if request.method == "POST":
-        education.delete()
-        messages.success(request, "Education berhasil dihapus!")
-        return redirect("main:show_education")
-
-    return redirect("main:show_education")
-
-@login_required(login_url="/login/")
-def delete_skill(request, skill_id):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    skill = get_object_or_404(Skill, pk=skill_id)
-
-    if request.method == "POST":
-        skill.delete()
-        messages.success(request, "Skill berhasil dihapus!")
-        return redirect("main:show_skill")
-
-    return redirect("main:show_skill")
+    return redirect(redirect_name)
 
 @login_required(login_url="/login/")
 @permission_required('main.change_project', raise_exception=True)

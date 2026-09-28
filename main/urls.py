@@ -1,10 +1,10 @@
 from django.urls import path
 
 from main.views import (show_main, show_experience, show_projects, show_education, show_skill,
-                        create_project, get_projects_json, delete_project,
-                        create_experience, get_experience_json, delete_experience,
-                        create_education, get_education_json, delete_education,
-                        create_skill, get_skill_json, delete_skill, 
+                        create_project, get_projects_json, delete_item,
+                        create_experience, get_experience_json,
+                        create_education, get_education_json,
+                        create_skill, get_skill_json,
                         edit_project, edit_experience, edit_education, edit_skill, 
                         register, login_user, logout_user, toggle_star)
 
@@ -24,25 +24,25 @@ urlpatterns = [
 
     path("projects/add/", create_project, name="create_project"),
     path("api/projects/", get_projects_json, name="get_projects_json"),
-    path("projects/<uuid:project_id>/delete/", delete_project, name="delete_project"),
+    path("projects/<uuid:object_id>/delete/", delete_item, {"model_type": "project"}, name="delete_project"),
     path("projects/<uuid:project_id>/edit/", edit_project, name="edit_project"),
     path("projects/<uuid:object_id>/star/", toggle_star, {"model_type": "project"}, name="toggle_project_star"),
 
     path("experience/add/", create_experience, name="create_experience"),
     path("api/experience/", get_experience_json, name="get_experience_json"),
-    path("experience/<uuid:experience_id>/delete/", delete_experience, name="delete_experience"),
+    path("experience/<uuid:object_id>/delete/", delete_item, {"model_type": "experience"}, name="delete_experience"),
     path("experience/<uuid:experience_id>/edit/", edit_experience, name="edit_experience"),
     path("experience/<uuid:object_id>/star/", toggle_star, {"model_type": "experience"}, name="toggle_experience_star"),
 
     path("education/add/", create_education, name="create_education"),
     path("api/education/", get_education_json, name="get_education_json"),
-    path("education/<uuid:education_id>/delete/", delete_education, name="delete_education"),
+    path("education/<uuid:object_id>/delete/", delete_item, {"model_type": "education"}, name="delete_education"),
     path("education/<uuid:education_id>/edit/", edit_education, name="edit_education"),
     path("education/<uuid:object_id>/star/", toggle_star, {"model_type": "education"}, name="toggle_education_star"),
 
     path("skill/add/", create_skill, name="create_skill"),
     path("api/skill/", get_skill_json, name="get_skill_json"),
-    path("skill/<uuid:skill_id>/delete/", delete_skill, name="delete_skill"),
+    path("skill/<uuid:object_id>/delete/", delete_item, {"model_type": "skill"}, name="delete_skill"),
     path("skill/<uuid:skill_id>/edit/", edit_skill, name="edit_skill"),
     path("skill/<uuid:object_id>/star/", toggle_star, {"model_type": "skill"}, name="toggle_skill_star"),
 ]

@@ -61,6 +61,52 @@ class MainTest(TestCase):
 
 
 class ModelTest(TestCase):
+    def test_delete_modal_renders_correct_route_for_each_model(self):
+        admin = User.objects.create_superuser(
+            username="modal-admin",
+            email="admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+        targets = [
+            (
+                "show_projects",
+                "delete_project",
+                Project.objects.create(name="Portfolio Website", description="A portfolio."),
+            ),
+            (
+                "show_experience",
+                "delete_experience",
+                Experience.objects.create(title="Research Assistant", description="Conducted research."),
+            ),
+            (
+                "show_education",
+                "delete_education",
+                Education.objects.create(
+                    name="University of Indonesia",
+                    description="Computer science degree.",
+                    started_at=date(2025, 8, 1),
+                ),
+            ),
+            ("show_skill", "delete_skill", Skill.objects.create(title="Python")),
+        ]
+
+        for page_name, delete_name, item in targets:
+            with self.subTest(model=delete_name):
+                response = self.client.get(reverse(f"main:{page_name}"))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(
+                    response,
+                    f'action="{reverse(f"main:{delete_name}", args=[item.id])}"',
+                )
+                self.assertContains(response, f'popovertarget="delete-{item.id}"')
+
+                delete_response = self.client.post(
+                    reverse(f"main:{delete_name}", args=[item.id]),
+                )
+                self.assertRedirects(delete_response, reverse(f"main:{page_name}"))
+                self.assertFalse(type(item).objects.filter(pk=item.id).exists())
+
     def test_toggle_star_supports_all_starable_models(self):
         user = User.objects.create_user(username="star-user", password="test-password")
         self.client.force_login(user)

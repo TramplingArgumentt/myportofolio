@@ -56,7 +56,7 @@
                             {% endif %}
                             <div class="project-card-actions">
                                 <div class="project-actions">
-                                    {% include "components/experience_star.html" with experience=experience %}
+                                    {% include "components/star.html" with item=experience star_url_name="main:toggle_experience_star" %}
                                     {% if perms.main.change_experience %}
                                         <a href="{% url 'main:edit_experience' experience_id=experience.id %}"
                                             class="button"
@@ -66,7 +66,7 @@
                                         </a>
                                     {% endif %}
                                     {% if user.is_superuser %}
-                                        {% include "components/experience_delete_modal.html" with experience=experience %}
+                                        {% include "components/delete_modal.html" with item=experience delete_url_name="main:delete_experience" %}
                                     {% endif %}
                                 </div>
                             </div>

@@ -42,7 +42,7 @@
                         </div>
                         <div class="project-card-actions">
                             <div class="project-actions">
-                                {% include "components/skill_star.html" with skill=skill %}
+                                {% include "components/star.html" with item=skill star_url_name="main:toggle_skill_star" %}
                                 {% if perms.main.change_skill %}
                                     <a href="{% url 'main:edit_skill' skill_id=skill.id %}"
                                         class="button"
@@ -52,7 +52,7 @@
                                     </a>
                                 {% endif %}
                                 {% if user.is_superuser %}
-                                    {% include "components/skill_delete_modal.html" with skill=skill %}
+                                    {% include "components/delete_modal.html" with item=skill delete_url_name="main:delete_skill" %}
                                 {% endif %}
                             </div>
                         </div>
