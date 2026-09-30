@@ -1,6 +1,8 @@
 from django.forms import DateInput, DateTimeInput, ModelForm, Select, TextInput, Textarea, URLInput
 from django import forms
 from main.models import Project, Experience, Education, Skill
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -34,8 +36,7 @@ class ProjectForm(ModelForm):
                     "rows": 3,
                 }
             ),
-            "tags": forms.CheckboxSelectMultiple(
-            ),
+            "tags": forms.CheckboxSelectMultiple(attrs={"class": "checkbox-list"}),
             "project_url": URLInput(
                 attrs={
                     "placeholder": "https://github.com/kakBurhan/burhanquestv4",
@@ -47,6 +48,15 @@ class ProjectForm(ModelForm):
                 }
             ),
         }
+
+    def clean_name(self):
+        name = strip_tags(self.cleaned_data["name"]).strip()
+        if not name:
+            raise ValidationError("Nama proyek tidak boleh hanya berisi tag HTML.")
+        return name
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
 
 class ExperienceForm(ModelForm):
     def __init__(self, *args, **kwargs):

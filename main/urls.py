@@ -6,7 +6,7 @@ from main.views import (show_main, show_experience, show_projects, show_educatio
                         create_education, get_education_json,
                         create_skill, get_skill_json,
                         edit_project, edit_experience, edit_education, edit_skill, 
-                        register, login_user, logout_user, toggle_star)
+                        register, login_user, logout_user, toggle_star, create_project_ajax)
 
 app_name = "main"
 
@@ -27,7 +27,7 @@ urlpatterns = [
     path("projects/<uuid:object_id>/delete/", delete_item, {"model_type": "project"}, name="delete_project"),
     path("projects/<uuid:project_id>/edit/", edit_project, name="edit_project"),
     path("projects/<uuid:object_id>/star/", toggle_star, {"model_type": "project"}, name="toggle_project_star"),
-
+    path("projects/add-ajax/", create_project_ajax, name="create_project_ajax"),
     path("experience/add/", create_experience, name="create_experience"),
     path("api/experience/", get_experience_json, name="get_experience_json"),
     path("experience/<uuid:object_id>/delete/", delete_item, {"model_type": "experience"}, name="delete_experience"),

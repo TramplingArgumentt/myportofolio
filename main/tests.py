@@ -260,15 +260,16 @@ class ModelTest(TestCase):
             response.json(),
             [
                 {
-                    "model": "main.project",
                     "pk": str(matching_project.id),
                     "fields": {
                         "name": "Portfolio Website",
                         "description": "A personal portfolio.",
-                        "tags": [["Django"]],
+                        "tags": ["Django"],
                         "project_url": "",
                         "project_image_url": "",
-                        "starred_by": [],
+                        "star_count": 0,
+                        "is_starred": False,
+                        "starred_by_names": "",
                     },
                 }
             ],
