@@ -1,6 +1,6 @@
 from datetime import date
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -39,25 +39,32 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "experience.html")
-        self.assertContains(response, self.experience.title)
-        self.assertContains(response, self.experience.description)
-        self.assertContains(response, "Part-Time")
+        self.assertContains(
+            response,
+            f'const BASE_EXPERIENCES_ENDPOINT = "{reverse("main:get_experience_json")}";',
+        )
+        self.assertContains(response, 'id="grid"')
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
 
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
         response = self.client.get(reverse("main:show_experience"))
 
-        self.assertContains(response, "Belum ada experience yang ditambahkan.")
+        self.assertContains(response, 'id="empty"')
+        self.assertContains(response, "Belum ada experience yang ditambahkan atau ditemukan.")
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
         self.experience.save()
-        response = self.client.get(reverse("main:show_experience"))
+        response = self.client.get(reverse("main:get_experience_json"))
 
         self.assertFalse(self.experience.is_ongoing)
-        self.assertContains(response, "Part-Time")
-        self.assertNotContains(response, "Sedang berlangsung")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()[0]["fields"]["is_ongoing"])
+        self.assertEqual(
+            response.json()[0]["fields"]["get_category_display"],
+            "Part-Time",
+        )
 
 
 class ModelTest(TestCase):
@@ -103,6 +110,222 @@ class ModelTest(TestCase):
                     reverse(f"main:{cancel_route}"),
                 )
 
+    def test_all_portfolio_pages_render_the_shared_add_modal(self):
+        admin = User.objects.create_superuser(
+            username="modal-admin",
+            email="modal-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+        pages = [
+            ("show_projects", "add-project-modal", "project-form", "create_project"),
+            ("show_experience", "add-experience-modal", "experience-form", "create_experience"),
+            ("show_education", "add-education-modal", "education-form", "create_education"),
+            ("show_skill", "add-skill-modal", "skill-form", "create_skill"),
+        ]
+
+        for page_name, modal_id, form_id, action_name in pages:
+            with self.subTest(page=page_name):
+                response = self.client.get(reverse(f"main:{page_name}"))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, f'id="{modal_id}"')
+                self.assertContains(response, f'id="{form_id}"')
+                self.assertContains(
+                    response,
+                    f'action="{reverse(f"main:{action_name}")}"',
+                )
+                self.assertContains(response, f'popovertarget="{modal_id}"')
+
+    def test_create_experience_ajax_adds_an_experience(self):
+        admin = User.objects.create_superuser(
+            username="experience-admin",
+            email="experience-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            reverse("main:create_experience_ajax"),
+            {
+                "title": "Internship",
+                "description": "Built useful features.",
+                "category": "full-time",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Experience.objects.get().title, "Internship")
+
+    def test_create_project_ajax_adds_a_project(self):
+        admin = User.objects.create_superuser(
+            username="project-admin",
+            email="project-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            reverse("main:create_project_ajax"),
+            {
+                "name": "Portfolio Website",
+                "description": "A personal portfolio.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        project = Project.objects.get()
+        self.assertEqual(project.name, "Portfolio Website")
+        self.assertEqual(response.json()["pk"], str(project.id))
+
+    def test_create_education_ajax_adds_an_education(self):
+        admin = User.objects.create_superuser(
+            username="education-admin",
+            email="education-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+
+        response = self.client.post(
+            reverse("main:create_education_ajax"),
+            {
+                "name": "University of Indonesia",
+                "degree": "Bachelor of Computer Science",
+                "description": "Faculty of Computer Science.",
+                "started_at": "2025-08-01",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        education = Education.objects.get()
+        self.assertEqual(education.name, "University of Indonesia")
+        self.assertEqual(response.json()["pk"], str(education.id))
+
+    def test_ajax_create_endpoints_reject_non_superusers(self):
+        user = User.objects.create_user(
+            username="portfolio-user",
+            password="test-password",
+        )
+        self.client.force_login(user)
+        endpoints = [
+            (
+                "create_project_ajax",
+                {"name": "Portfolio", "description": "A portfolio."},
+                Project,
+            ),
+            (
+                "create_experience_ajax",
+                {"title": "Internship", "description": "Built useful features."},
+                Experience,
+            ),
+            (
+                "create_education_ajax",
+                {
+                    "name": "University",
+                    "description": "Computer science degree.",
+                    "started_at": "2025-08-01",
+                },
+                Education,
+            ),
+            ("create_skill_ajax", {"title": "Python"}, Skill),
+        ]
+
+        for route_name, data, model in endpoints:
+            with self.subTest(route=route_name):
+                response = self.client.post(reverse(f"main:{route_name}"), data)
+
+                self.assertEqual(response.status_code, 403)
+                self.assertFalse(model.objects.exists())
+
+    def test_skill_page_renders_search_controls_used_by_script(self):
+        response = self.client.get(reverse("main:show_skill"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="skill-search-form"')
+        self.assertContains(response, 'id="search-input"')
+        self.assertContains(response, "getElementById('skill-search-form')")
+        self.assertContains(response, "getElementById('search-input')")
+
+    def test_skill_json_includes_tags_and_filters_by_name(self):
+        matching_skill = Skill.objects.create(title="Programming Languages")
+        other_skill = Skill.objects.create(title="Design")
+        python = Tag.objects.create(name="Python")
+        matching_skill.tags.add(python)
+
+        response = self.client.get(
+            reverse("main:get_skill_json"),
+            {"name": "programming"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "pk": str(matching_skill.id),
+                    "fields": {
+                        "title": "Programming Languages",
+                        "tags": ["Python"],
+                        "star_count": 0,
+                        "is_starred": False,
+                        "starred_by_names": "",
+                    },
+                }
+            ],
+        )
+        self.assertNotIn(str(other_skill.id), response.content.decode())
+
+    def test_create_skill_ajax_saves_selected_tags(self):
+        admin = User.objects.create_superuser(
+            username="skill-admin",
+            email="skill-admin@example.com",
+            password="test-password",
+        )
+        self.client.force_login(admin)
+        tag = Tag.objects.create(name="Django")
+
+        response = self.client.post(
+            reverse("main:create_skill_ajax"),
+            {"title": "Frameworks", "tags": [str(tag.id)]},
+        )
+
+        self.assertEqual(response.status_code, 201)
+        skill = Skill.objects.get(title="Frameworks")
+        self.assertEqual(list(skill.tags.all()), [tag])
+
+    def test_experience_json_includes_card_display_fields(self):
+        experience = Experience.objects.create(
+            title="Research Assistant",
+            description="Conducted research.",
+            category="part-time",
+        )
+
+        response = self.client.get(reverse("main:get_experience_json"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json()[0]["fields"]["get_category_display"],
+            "Part-Time",
+        )
+        self.assertTrue(response.json()[0]["fields"]["is_ongoing"])
+        self.assertEqual(response.json()[0]["pk"], str(experience.id))
+
+    def test_project_page_uses_project_edit_permission_for_controls(self):
+        user = User.objects.create_user(
+            username="project-editor",
+            password="test-password",
+        )
+        project_edit_permission = Permission.objects.get(
+            content_type__app_label="main",
+            codename="change_project",
+        )
+        user.user_permissions.add(project_edit_permission)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("main:show_projects"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'const EDITOR = "true" === "true";')
+
     def test_delete_modal_renders_correct_route_for_each_model(self):
         admin = User.objects.create_superuser(
             username="modal-admin",
@@ -137,11 +360,15 @@ class ModelTest(TestCase):
             with self.subTest(model=delete_name):
                 response = self.client.get(reverse(f"main:{page_name}"))
                 self.assertEqual(response.status_code, 200)
+                delete_url_template = reverse(
+                    f"main:{delete_name}",
+                    args=["00000000-0000-0000-0000-000000000000"],
+                )
+                self.assertContains(response, f'const deleteUrl = "{delete_url_template}"')
                 self.assertContains(
                     response,
-                    f'action="{reverse(f"main:{delete_name}", args=[item.id])}"',
+                    ".replace('00000000-0000-0000-0000-000000000000',",
                 )
-                self.assertContains(response, f'popovertarget="delete-{item.id}"')
 
                 delete_response = self.client.post(
                     reverse(f"main:{delete_name}", args=[item.id]),
@@ -221,6 +448,8 @@ class ModelTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual([item["pk"] for item in response.json()], [str(matching.id)])
+        self.assertEqual(response.json()[0]["fields"]["year_range"], "2025 — Present")
+        self.assertEqual(response.json()[0]["fields"]["degree"], "")
 
     def test_experience_defaults_and_string(self):
         experience = Experience.objects.create(

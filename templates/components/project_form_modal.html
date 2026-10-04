@@ -1,26 +1,26 @@
-<div id="add-project-modal"
+<div id="{{ modal_id }}"
      class="project-form-modal"
      popover="auto"
      role="dialog"
      aria-modal="true"
-     aria-labelledby="add-project-modal-title">
+     aria-labelledby="{{ modal_id }}-title">
     <button type="button"
             class="project-form-modal__backdrop"
-            popovertarget="add-project-modal"
+            popovertarget="{{ modal_id }}"
             popovertargetaction="hide"
-            aria-label="Tutup form tambah proyek"></button>
+            aria-label="Tutup {{ modal_title }}"></button>
 
     <div class="project-form-modal__content">
         <button type="button"
                 class="project-form-modal__close"
-                popovertarget="add-project-modal"
+                popovertarget="{{ modal_id }}"
                 popovertargetaction="hide"
-                aria-label="Tutup form tambah proyek">×</button>
+                aria-label="Tutup {{ modal_title }}">×</button>
 
-        <h2 id="add-project-modal-title">Tambah Proyek Baru</h2>
-        <form id="project-form"
+        <h2 id="{{ modal_id }}-title">{{ modal_title }}</h2>
+        <form id="{{ form_id }}"
               method="post"
-              action="{% url 'main:create_project' %}"
+              action="{{ form_action }}"
               class="project-form">
             {% csrf_token %}
             {% for field in form %}
@@ -35,9 +35,9 @@
             <div class="project-form-modal__actions">
                 <button type="button"
                         class="button button-secondary"
-                        popovertarget="add-project-modal"
+                        popovertarget="{{ modal_id }}"
                         popovertargetaction="hide">Batal</button>
-                <button type="submit" class="button">Tambah Proyek</button>
+                <button type="submit" class="button">{{ form_submit_label }}</button>
             </div>
         </form>
     </div>
