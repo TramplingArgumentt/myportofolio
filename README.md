@@ -39,6 +39,11 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 - Menerapkan autentikasi dan otorisasi untuk mengelola data
 - Menerapkan session dan cookies 
 
+### Week 5 - 5 Oktober 2026 (Tugas 5)
+- Menambah toast dengan JavaScript untuk interactivity
+- Menerapkan perlindungan XSS dengan escaping
+- Menambahkan fitur debouncing untuk search
+
 ### Tugas 1
 
 1. Ya, saya menggunakan elemen <section> dan <article>. Penggunaan section saya gunakan untuk membagi halaman berdasarkan topik seperti Skill, Project, Experience, dan Education, sementara article digunakan untuk konten yang lebih spesifik di dalam satu section agar lebih rapi, contohnya pada konten Project. Tag <aside> tidak saya gunakan karena kompleksitas website yang masih tergolong sederhana sehingga tidak memerlukan fitur yang disediakan dari tag <aside>.
@@ -94,6 +99,26 @@ Dibanding XML, JSON umumnya membutuhkan lebih sedikit karaker untuk merepresenta
 3. Ketika pengguna mengakses URL ke suatu view, Django akan melakukan routing melalui `urls.py` menuju fungsi view yang sesuai. View kemudian mengambil data portofolio dari database melalui Django ORM. Tetapi, hasil dari query tersebut adalah objek model Django atau `QuerySet`, bukan data JSON yang dapat langsung dikirim sebagai response API. Frontend atau client tidak memahami objek model Django secara langsung. Client membutuhkan format data standar yang dapat dikirim melalui HTTP.
 
 Oleh karena itu, data perlu diproses dengan serialization. Serialization adalah proses mengubah objek atau struktur data yang digunakan oleh aplikasi menjadi format data yang dapat disimpan atau dikirim, dalam kasus ini menjadi format JSON. Setelah dilakukan serialization, hasilnya dikembalikan melalui JsonResponse.
+
+### Tugas 5
+1. Debouncing adalah teknik untuk menunda sebuah fungsi hingga suatu jeda waktu berlalu tanpa event baru. Jika event terjadi lagi sebelum jeda berakhir, timer di-reset dan penghitungan dimulai dari awal.
+
+Teknik ini penting diterapkan karena tanpa debouncing, setiap event misalnya input keyboard langsung mengirim request ke server. Contohnya mengetik 'laptop' akan menghasilkan 6 request. Hal ini mengakibatkan beban server yang berlebihan, pemborosan bandwidth dan query database, race condition, dan UI berkedip. Dengan adanya debouncing, input 'laptop' hanya akan menghasilkan 1 request.
+
+2. `fetch()` bersifat asinkron dan langsung mengembalikan sebuah Promise, bukan data hasil response. Kata kunci `await` (yang hanya bisa dipakai di dalam fungsi `async`) berfungsi untuk menjeda eksekusi fungsi tersebut sampai Promise selesai, lalu mengambil nilai hasilnya. Selama menunggu, thread utama browser tidak terblokir, sehingga halaman tetap responsif.
+
+Tanpa `await`, JavaScript akan langsung lanjut ke baris kode berikutnya, yang mengakibatkan variabel yang menyimpan nilainya menyimpan `Promise`, bukan data yang dapat digunakan. Jika kode berikutnya menggunakan method seperti `.json()` akan terjadi error karena `Promise` tidak memiliki method itu. Urutan eksekusi juga akan menjadi kacau karena kode setelah `fetch()` akan berjalan sebelum selesainya request. Data pada halaman akan kosong atau undefined, atau berupa object `Promise`.
+
+3. XSS (Cross-Site Scripting) adalah serangan di mana penyerang menyisipkan script berbahaya (contohnya JavaScript) ke dalam halaman web yang kemudian dieksekusi di browser korban. Akibatnya bisa berupa pencurian cookie/session, pembajakan akun, pengalihan ke situs palsu, atau manipulasi tampilan halaman.
+
+AJAX/JavaScript lebih rentan dibanding dengan Django karena AJAX/JavaScript tidak memiliki escaping otomatis, sehingga developer harus menanganinya sendiri. AJAX/JavaScript juga biasanya memakai innerHTML yang mengurai string sebagai HTML, sedangkan template Django memperlakukan variabel seperti teks.
+
+Contohnya:
+`container.innerHTML += '<div class="card">${product.name}</div>';`
+
+Jika product.name berisi `<img src=x onerror=...>`
+
+dengan template Django `{{product.name}}` akan menjadi `&lt;img src=x onerror=...&gt` dan tampil sebagai teks biasa.
 
 ## AI Disclosure: 
 ### Tools
