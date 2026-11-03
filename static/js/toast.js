@@ -1,6 +1,7 @@
 let toastTimer;
 
 function showToast(title, message, type = 'normal', duration = 1500) {
+  duration = message.length * 60;
   const toastComponent = document.getElementById('toast-component');
   const toastTitle = document.getElementById('toast-title');
   const toastMessage = document.getElementById('toast-message');
@@ -25,7 +26,7 @@ function showToast(title, message, type = 'normal', duration = 1500) {
 
   // Batalkan timer sebelumnya jika toast masih tampil
   clearTimeout(toastTimer);
-
+  
   // Animasi muncul
   if (!toastComponent.matches(':popover-open')) {
       toastComponent.showPopover();

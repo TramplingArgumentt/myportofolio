@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from main.models import Education, Experience, Project, Skill, Tag
+from main.serializers import ProjectSerializer
 
 
 class MainTest(TestCase):
@@ -309,7 +310,7 @@ class ModelTest(TestCase):
         self.assertTrue(response.json()[0]["fields"]["is_ongoing"])
         self.assertEqual(response.json()[0]["pk"], str(experience.id))
 
-    def test_project_page_uses_project_edit_permission_for_controls(self):
+    def test_project_page_limits_write_controls_to_superuser(self):
         user = User.objects.create_user(
             username="project-editor",
             password="test-password",
@@ -324,7 +325,7 @@ class ModelTest(TestCase):
         response = self.client.get(reverse("main:show_projects"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'const EDITOR = "true" === "true";')
+        self.assertContains(response, 'const IS_SUPERUSER = "false" === "true";')
 
     def test_delete_modal_renders_correct_route_for_each_model(self):
         admin = User.objects.create_superuser(
@@ -364,11 +365,21 @@ class ModelTest(TestCase):
                     f"main:{delete_name}",
                     args=["00000000-0000-0000-0000-000000000000"],
                 )
-                self.assertContains(response, f'const deleteUrl = "{delete_url_template}"')
-                self.assertContains(
-                    response,
-                    ".replace('00000000-0000-0000-0000-000000000000',",
-                )
+                if delete_name == "delete_project":
+                    api_url_template = reverse(
+                        "api:project-detail",
+                        args=["00000000-0000-0000-0000-000000000000"],
+                    )
+                    self.assertContains(
+                        response,
+                        f'const DETAIL_PROJECT_ENDPOINT = "{api_url_template}"',
+                    )
+                else:
+                    self.assertContains(response, f'const deleteUrl = "{delete_url_template}"')
+                    self.assertContains(
+                        response,
+                        ".replace('00000000-0000-0000-0000-000000000000',",
+                    )
 
                 delete_response = self.client.post(
                     reverse(f"main:{delete_name}", args=[item.id]),
@@ -547,3 +558,27 @@ class ModelTest(TestCase):
         self.assertEqual(str(skill), "Python")
         self.assertEqual(list(skill.tags.all()), [tag])
         self.assertEqual(list(tag.skills.all()), [skill])
+
+
+class ProjectSerializerTest(TestCase):
+    def test_serializes_multiple_tags_as_names(self):
+        project = Project.objects.create(name="Portfolio", description="A portfolio.")
+        tags = [Tag.objects.create(name=name) for name in ("Django", "Python")]
+        project.tags.add(*tags)
+
+        data = ProjectSerializer(project).data
+
+        self.assertCountEqual(data["tags"], [tag.name for tag in tags])
+
+    def test_creates_project_with_multiple_tags(self):
+        tags = [Tag.objects.create(name=name) for name in ("Django", "Python")]
+        serializer = ProjectSerializer(data={
+            "name": "Portfolio",
+            "description": "A portfolio.",
+            "tags": [str(tag.id) for tag in tags],
+        })
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        project = serializer.save()
+
+        self.assertCountEqual(project.tags.all(), tags)
