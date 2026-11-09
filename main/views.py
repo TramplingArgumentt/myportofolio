@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from main.forms import EducationForm, ExperienceForm, ProjectForm, SkillForm
-from main.models import Experience, Project, Education, Skill
+from main.models import Experience, Project, Education, Skill, Tag
 import datetime
 
 def register(request):
@@ -66,6 +66,10 @@ def show_experience(request):
 
     context = {
         "name": "Evan Andrian",
+        "can_edit": request.user.is_authenticated and (
+            request.user.is_superuser
+            or request.user.groups.filter(name="Editor").exists()
+        ),
         "name_query": name_query,
         "form": ExperienceForm(),
         "modal_id": "add-experience-modal",
@@ -95,6 +99,10 @@ def show_education(request):
 
     context = {
         "name": "Evan Andrian",
+        "can_edit": request.user.is_authenticated and (
+            request.user.is_superuser
+            or request.user.groups.filter(name="Editor").exists()
+        ),
         "name_query": name_query,
         "form": EducationForm(),
         "modal_id": "add-education-modal",
@@ -110,8 +118,13 @@ def show_skill(request):
 
     context = {
         "name": "Evan Andrian",
+        "can_edit": request.user.is_authenticated and (
+            request.user.is_superuser
+            or request.user.groups.filter(name="Editor").exists()
+        ),
         "name_query": name_query,
         "form": SkillForm(),
+        "tag_options": list(Tag.objects.values("id", "name")),
         "modal_id": "add-skill-modal",
         "modal_title": "Tambah Skill Baru",
         "form_id": "skill-form",

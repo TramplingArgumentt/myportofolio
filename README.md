@@ -44,6 +44,12 @@ Pada implementasi awal, website dibuat menggunakan HTML dan CSS untuk membuat st
 - Menerapkan perlindungan XSS dengan escaping
 - Menambahkan fitur debouncing untuk search
 
+### Week 6 - 9 November 2026 (Tugas 6)
+- Menambahkan API Django REST Framework untuk Experience, Education, dan Skill, termasuk serializer, validasi input, pencarian, serta fitur star
+- Menerapkan permission API untuk pengunjung, pengguna biasa, Editor, dan pemilik portofolio
+- Mengintegrasikan halaman Experience, Education, dan Skill dengan API untuk menampilkan, mencari, menambah, mengubah, menghapus, dan memberi star tanpa reload
+- Menambahkan pengujian API untuk validasi, permission, fitur star, dan perlindungan CSRF
+
 ### Tugas 1
 
 1. Ya, saya menggunakan elemen <section> dan <article>. Penggunaan section saya gunakan untuk membagi halaman berdasarkan topik seperti Skill, Project, Experience, dan Education, sementara article digunakan untuk konten yang lebih spesifik di dalam satu section agar lebih rapi, contohnya pada konten Project. Tag <aside> tidak saya gunakan karena kompleksitas website yang masih tergolong sederhana sehingga tidak memerlukan fitur yang disediakan dari tag <aside>.
@@ -119,6 +125,18 @@ Contohnya:
 Jika product.name berisi `<img src=x onerror=...>`
 
 dengan template Django `{{product.name}}` akan menjadi `&lt;img src=x onerror=...&gt` dan tampil sebagai teks biasa.
+
+### Tugas 6
+
+1. REST (Representational State Transfer) adalah gaya arsitektur untuk merancang API. API REST menggunakan resource yang dapat diidentifikasi melalui URL dan berinteraksi dengannya melalui metode HTTP yang memiliki makna konsisten, seperti `GET` untuk membaca, `POST` untuk membuat, `PUT` untuk mengganti, dan `DELETE` untuk menghapus. JSON hanya format representasi data. API yang mengembalikan JSON belum tentu RESTful jika, misalnya, URL dan metodenya tidak merepresentasikan resource dan operasinya dengan jelas.
+
+`PUT` digunakan untuk mengganti representasi resource secara keseluruhan, sehingga client biasanya perlu mengirim semua field yang diwajibkan. Contohnya, memperbarui seluruh informasi sebuah experience. `PATCH` digunakan untuk mengubah sebagian field saja. Contohnya, memperbarui deskripsi experience tanpa mengirim ulang judul, kategori, dan tanggalnya.
+
+2. Serializer pada Django REST Framework mengubah objek model menjadi data primitif yang dapat disajikan sebagai JSON, dan memproses data masukan menjadi nilai yang dapat disimpan ke model. Serializer juga menangani validasi, sehingga input yang tidak valid dapat ditolak dengan pesan kesalahan yang terstruktur. Dibandingkan menyusun dictionary secara manual dengan `JsonResponse` seperti pada Tugas 5, serializer membuat konversi dan validasi lebih konsisten, dapat digunakan kembali, dan lebih mudah mengatur field yang boleh dibaca atau ditulis.
+
+3. Autentikasi memeriksa identitas pengguna yang membuat request, sedangkan otorisasi menentukan tindakan apa yang boleh dilakukan oleh pengguna tersebut. Pada proyek ini, permission API membedakan hak pengunjung, pengguna biasa, Editor, dan pemilik portofolio. Pemeriksaan harus dilakukan di server melalui permission class karena pengguna tetap dapat mengirim request langsung ke API meskipun tombolnya disembunyikan di halaman. Menyembunyikan tombol hanya mengatur tampilan, bukan membatasi akses ke data.
+
+4. `SessionAuthentication` menggunakan session pengguna yang disimpan di cookie, dan browser dapat mengirim cookie itu secara otomatis bersama request. Karena itu, request yang mengubah data perlu menyertakan token CSRF yang sesuai agar server dapat membedakan request dari halaman aplikasi dengan request lintas situs yang tidak diinginkan. `force_authenticate` langsung menetapkan pengguna yang terautentikasi pada request pengujian, sehingga tidak menjalankan alur autentikasi session dan pemeriksaan CSRF seperti request login biasa. Untuk menguji CSRF, gunakan `APIClient(enforce_csrf_checks=True)`, login dengan `.login()`, lalu uji request dengan dan tanpa token.
 
 ## AI Disclosure: 
 ### Tools

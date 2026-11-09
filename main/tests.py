@@ -42,7 +42,7 @@ class MainTest(TestCase):
         self.assertTemplateUsed(response, "experience.html")
         self.assertContains(
             response,
-            f'const BASE_EXPERIENCES_ENDPOINT = "{reverse("main:get_experience_json")}";',
+            f'listUrl: "{reverse("api:experience-list")}",',
         )
         self.assertContains(response, 'id="grid"')
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
@@ -243,8 +243,15 @@ class ModelTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="skill-search-form"')
         self.assertContains(response, 'id="search-input"')
-        self.assertContains(response, "getElementById('skill-search-form')")
-        self.assertContains(response, "getElementById('search-input')")
+        self.assertContains(response, "searchFormId: 'skill-search-form'")
+        self.assertContains(response, "initializePortfolioApi")
+
+    def test_education_actions_render_in_the_content_column(self):
+        response = self.client.get(reverse("main:show_education"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "actionsParentSelector: '[data-education-content]'")
+        self.assertContains(response, "content.dataset.educationContent")
 
     def test_skill_json_includes_tags_and_filters_by_name(self):
         matching_skill = Skill.objects.create(title="Programming Languages")
@@ -361,10 +368,6 @@ class ModelTest(TestCase):
             with self.subTest(model=delete_name):
                 response = self.client.get(reverse(f"main:{page_name}"))
                 self.assertEqual(response.status_code, 200)
-                delete_url_template = reverse(
-                    f"main:{delete_name}",
-                    args=["00000000-0000-0000-0000-000000000000"],
-                )
                 if delete_name == "delete_project":
                     api_url_template = reverse(
                         "api:project-detail",
@@ -375,11 +378,17 @@ class ModelTest(TestCase):
                         f'const DETAIL_PROJECT_ENDPOINT = "{api_url_template}"',
                     )
                 else:
-                    self.assertContains(response, f'const deleteUrl = "{delete_url_template}"')
-                    self.assertContains(
-                        response,
-                        ".replace('00000000-0000-0000-0000-000000000000',",
+                    section = delete_name.removeprefix("delete_")
+                    api_url_template = reverse(
+                        f"api:{section}-detail",
+                        args=["00000000-0000-0000-0000-000000000000"],
                     )
+                    star_url_template = reverse(
+                        f"api:{section}-star",
+                        args=["00000000-0000-0000-0000-000000000000"],
+                    )
+                    self.assertContains(response, f'detailUrl: "{api_url_template}"')
+                    self.assertContains(response, f'starUrl: "{star_url_template}"')
 
                 delete_response = self.client.post(
                     reverse(f"main:{delete_name}", args=[item.id]),
