@@ -3,9 +3,27 @@ import uuid
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
-from main.models import Education, Experience, Project, Skill
+from main.models import Education, Experience, Project, Skill, Tag
+
+
+class TagAPITest(APITestCase):
+    def test_public_tag_list_returns_ids_and_names(self):
+        second_tag = Tag.objects.create(name="Zig")
+        first_tag = Tag.objects.create(name="Dart")
+
+        response = self.client.get(reverse("api:tag-list"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data,
+            [
+                {"id": str(first_tag.id), "name": "Dart"},
+                {"id": str(second_tag.id), "name": "Zig"},
+            ],
+        )
 
 
 class ProjectAPITest(APITestCase):
@@ -104,6 +122,23 @@ class ProjectAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.content, b"")
         self.assertFalse(Project.objects.filter(pk=self.project.id).exists())
+
+    def test_token_owner_can_create_project_with_selected_tags(self):
+        tag = Tag.objects.create(name="Flutter")
+        token = Token.objects.create(user=self.owner)
+
+        response = self.client.post(
+            self.list_url,
+            {**self.payload, "tags": [str(tag.id)]},
+            format="json",
+            HTTP_AUTHORIZATION=f"Token {token.key}",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["tags"], ["Flutter"])
+        self.assertTrue(
+            Project.objects.get(pk=response.data["id"]).tags.filter(pk=tag.id).exists(),
+        )
 
     def test_star_requires_login_and_toggles(self):
         self.assertEqual(

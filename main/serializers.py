@@ -9,6 +9,12 @@ class TagPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return value.name
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ["id", "name"]
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     tags = TagPrimaryKeyRelatedField(
         many=True,

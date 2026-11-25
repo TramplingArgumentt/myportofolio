@@ -1,21 +1,28 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import (
-    api_view, authentication_classes, permission_classes,
-)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import (api_view, authentication_classes, permission_classes,)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import Education, Experience, Project, Skill
+from main.models import Education, Experience, Project, Skill, Tag
 from main.permissions import IsPortfolioOwnerOrEditorOrReadOnly
 from main.serializers import (
     EducationSerializer, ExperienceSerializer, ProjectSerializer, SkillSerializer,
+    TagSerializer,
 )
 
 
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def tag_list(request):
+    tags = Tag.objects.order_by("name", "id")
+    serializer = TagSerializer(tags, many=True)
+    return Response(serializer.data)
+
+
 @api_view(["GET", "HEAD", "POST"])
-@authentication_classes([SessionAuthentication])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def project_list(request):
     if request.method in ("GET", "HEAD"):
@@ -34,7 +41,7 @@ def project_list(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(["GET", "HEAD", "PUT", "PATCH", "DELETE"])
-@authentication_classes([SessionAuthentication])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def project_detail(request, project_id):
     project = get_object_or_404(
@@ -184,3 +191,11 @@ def skill_detail(request, skill_id):
 @permission_classes([IsAuthenticated])
 def skill_star(request, skill_id):
     return _portfolio_star(request, Skill, SkillSerializer, skill_id)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def api_logout(request):
+    # TODO: Delete request.auth if it is not None, then return HTTP 204 No Content
+    if request.auth is not None:
+        request.auth.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
